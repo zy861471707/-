@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Title</title>
+    <link type="text/css" rel="stylesheet" href="./css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/swiper-4.3.3.min.css">
+    <link rel="stylesheet" href="./css/blue.css">
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./js/swiper-4.3.3.min.js"></script>
+    <script type="text/javascript" src="./js/icheck.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            outline: none;
+            font-family: "微软雅黑";
+            box-sizing: border-box;
+            font-size: 16px;
+            color: #222222;        
+        }
+        html,body{
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            position: relative;   
+            background-color: #F6F6F6;            
+        }
+        p,span {
+            margin: 0;
+            padding: 0;
+        }
+        .btn-block+.btn-block {
+            margin-top: 0px;
+        }
+        .col-sm-10 {
+            padding-right: 0px;
+            padding-left: 0px;
+        }
+        .col-md-12 {
+            padding-right: 0px;
+            padding-left: 0px;
+        }
+        .form-horizontal .form-group {
+            padding-right: 20px;
+            padding-left: 20px;
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+        .container {
+            padding-right: 20px;
+            padding-left: 20px;
+        }
+        .layout {
+            display: flex;
+            justify-content: space-between;
+        }
+        /* .radio label, .checkbox label {
+            padding-left: 0px;
+        } */
+        /* .icheckbox_minimal-blue,.iradio_minimal-blue {
+            margin-right: 20px;
+        } */
+        input[type=radio],
+        input[type=checkbox] {
+            margin: 0;
+            margin-top: 1px \9;
+            line-height: normal;
+        }
+        /* .radio input[type=radio],
+        .radio-inline input[type=radio],
+        .checkbox input[type=checkbox],
+        .checkbox-inline input[type=checkbox] {
+            margin-top: 5px;
+        } */
+        .btn-primary {
+            color: #ffffff;
+            background-color: #4db5e5;
+            border-color: #4db5e5;
+        }
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open>.dropdown-toggle.btn-primary {
+            color: #ffffff;
+            background-color: #4db5e5;
+            border-color: #4db5e5;
+        }
+        .btn-interval {
+            margin-left: 10px;
+        }
+        label {
+            display: inline-block;
+            max-width: 100%;
+            margin-bottom: 0px;
+            font-weight: inherit;
+            padding-right: 25px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="background-color: #ffffff;padding: 0 20px;">
+        <p class="text-center" style="padding:10px 0px 15px 0px;font-size: 16px;">
+            亲爱的用户,总机服务致力于为用户提供更好的服务,您的使用体验我们在聆听,您真实的心声是我们不断进步的动力,快来告诉我们吧!
+        </p>
+    </div>
+    <div style="height: 10px;"></div>
+    <div class="container" style="padding-top: 10px;background-color: #ffffff;">
+        <div class="row clearfix">
+            <form class="form-horizontal" id="form">
+                <div class="swiper-container col-md-12 column">
+                    <div class="swiper-wrapper" id="subject1">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div style="background-color: #ffffff;padding-right: 20px;padding-left: 20px;width: 100%;position: absolute;bottom: 0;">
+        <p style="padding-bottom: 10px;padding-top: 20px;text-align: center;">问卷一共<span style="color: #4db5e5;">5</span>个问题，当前为第<span style="color: #4db5e5;" id="activeSubject"></span>题</p>
+        <div class="form-group" style="margin-left: 0px;margin-right: 0px;">
+            <div class="col-sm-offset-1 col-sm-10" style="display: flex;justify-content: flex-start;align-items:center;padding-right: 0px;padding-left: 0px;">
+                <button type="button" id="prebtn" class="btn btn-lg btn-primary btn-block" style="outline:none;">上一题</button>
+                <button type="button" id="nextbtn" class="btn btn-lg btn-primary btn-block" style="outline:none;">下一题</button>
+            </div>
+            <div class="col-sm-offset-1 col-sm-10" style="padding-top: 10px;">
+                <button type="button" id="btn" class="btn btn-lg btn-primary btn-block">提交</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">
+                        提示
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <p id="modalHtml"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal -->
+    </div>
+
+    <script>
+        var data;
+        var param;
+        var activeSlide = 0;
+        $(document).ready(function(){        
+            $.ajax({
+                type: 'GET',
+                url: 'http://10.205.165.194:8080/admin/a/cms/questionnaire/get?titleId=1',
+                // data: {},
+                async:false,
+                dataType: "json",
+                success: function (data) {
+                    console.log(data.data)
+                    param = data.data;       
+                },
+                error:function(err){
+                    showDodal();
+                }
+            });
+            data = param.length;
+            for(var i = 0,len1 = param.length;i<len1;i++){
+                $('#subject1').append(
+                    `<div class="swiper-slide swiper-no-swiping option${i}">
+                        <div class="form-group">
+                            <p>${param[i].title}</p>
+                         </div>
+                    </div>`
+                );
+                if(param[i].isChoose === 1){
+                    for(var j = 0,len2 = param[i].options.length;j<len2;j++){
+                        $('.option'+i).append(
+                            `<div class="form-group">
+                                <div class="col-sm-offset-1 col-sm-10" style="height: 40px;display: flex;justify-content: space-between;align-items: center;">                                    
+                                    <div style="width: 100%;line-height: 40px;">
+                                        <div>${param[i].options[j].title}</div>                                        
+                                    </div>
+                                    <div style="line-height: 40px;">
+                                        <input type="radio" value="${param[i].options[j].value}" name="${param[i].options[j].name}" />
+                                    </div>                                   
+                                </div>
+                            </div>`
+                        );
+                    }
+                }
+                if(param[i].isChoose === 2){
+                    for(var j = 0,len2 = param[i].options.length;j<len2;j++){
+                        $('.option'+i).append(
+                            `<div class="form-group">
+                                <div class="col-sm-offset-1 col-sm-10" style="height: 40px;display: flex;justify-content: space-between;align-items: center;">                                    
+                                    <div >
+                                        <label>${param[i].options[j].title}</label>                                        
+                                    </div>
+                                    <div>
+                                        <input type="checkbox" value="${param[i].options[j].value}" name="${param[i].options[j].name}" />
+                                    </div>                                  
+                                </div>
+                            </div>`
+                        );
+                    }
+                }
+                if(param[i].isTextarea === 1){
+                    $('.option'+i).append(
+                        `<div class="col-sm-offset-1 col-sm-10" style="margin: 0 15px;">
+                            <textarea type="textarea" class="form-control" rows="5" maxlength="10" name="${param[i].name}" id="${param[i].name}" style="resize:none;" placeholder="请您在这里输入您的建议或意见(300字以内)"></textarea>
+                        </div>`
+                    );
+                }
+            }
+        });
+        window.onload=function(){
+            $('input').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue',
+                increaseArea: '20%' // optional
+            });
+            var submitBtn = document.getElementById('btn');
+            var mySwiper = new Swiper('.swiper-container', {
+                noSwiping: true
+            });
+            mySwiper.detachEvents();
+            if(activeSlide === 0){
+                $("#prebtn").hide();
+                $("#btn").hide();
+            }
+            $("#activeSubject").html(activeSlide+1);
+            $('#prebtn').click(function () {
+                activeSlide--;
+                mySwiper.slideTo(activeSlide,false);
+                if(activeSlide === 0){
+                    $("#prebtn").hide();
+                    $("#nextbtn").removeClass('btn-interval');
+                }                
+                $("#nextbtn").show();
+                $("#btn").hide();
+                $("#activeSubject").html(activeSlide+1);
+            })
+            $('#nextbtn').click(function () {                
+                $("#nextbtn").addClass('btn-interval');
+                checkForm();
+                if(activeSlide === data-1){
+                    console.log('这是最后一页')
+                    $("#nextbtn").hide();
+                    $("#btn").show();
+                }
+            })
+            
+            submitBtn.onclick = function (ev){              
+                if(checkForm()){
+                    $.ajax({
+                        type: 'POST',
+                        url: 'http://10.205.165.194:8080/admin/a/cms/questionnaire/save',
+                        data: $("form").serializeArray(),
+                        dataType: "json",
+                        success: function (data) {
+                            showDodal('操作成功,感谢您对总机服务的支持!');
+                        }
+                    });
+                    $("#btn").attr('disabled', 'disabled');    
+                }     
+            }
+            
+            function checkForm() {
+                for(let i = 0,len=param.length;i<len;i++){
+                    if(i === activeSlide){
+                        console.log(param[i])
+                        if(param[i].isChoose === 1){
+                            if( $("input[name="+param[i].options[0].name+"]:checked").size()!=0 ){
+                                // console.log("选中了")
+                                activeSlide++;
+                                $("#prebtn").show();
+                                mySwiper.slideTo(activeSlide,false);
+                                $("#activeSubject").html(activeSlide+1);
+                                return true;
+                            }else{
+                                // console.log('没选中')
+                                showDodal('请选中至少一个选项!');
+                                return false;
+                            }
+                        }
+                        if(param[i].isChoose === 2){
+                            var checkArry = document.getElementsByName(param[i].options[0].name);
+                            var values = new Array();
+                            for (let i = 0; i < checkArry.length; i++) {
+                                if(checkArry[i].checked === true){
+                                    //选中的操作
+                                    values.push(checkArry[i].value);                                    
+                                }          
+                            }
+                            if(values.length != 0){
+                                // console.log("选中了")
+                                activeSlide++;
+                                mySwiper.slideTo(activeSlide,false);
+                                $("#prebtn").show();
+                                $("#activeSubject").html(activeSlide+1);
+                                return true;
+                            }
+                            if (values.length < 1) {
+                                // console.log("至少选中一个")
+                                showDodal('请选中至少一个选项!');
+                                return false;
+                            }
+                        }
+                        if(param[i].isTextarea === 1){
+                            var text = $('#'+param[i].name).val().trim();
+                            if (text == null || text == "") {
+                                showDodal('请输入给我们的建议或意见!');
+                                return false;
+                            }else{
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function showDodal(message) {
+            var msg = message?message:'网络出现问题,请刷新后重新答卷!'; 
+            $('#myModal').on('shown.bs.modal',
+                function () {
+                    $('#modalHtml').html(msg);
+                }
+            );
+            $('#myModal').modal('show');
+        }
+    </script>
+</body>
+
+</html>
