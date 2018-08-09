@@ -95,19 +95,19 @@
             max-width: 100%;
             margin-bottom: 0px;
             font-weight: inherit;
-            padding-right: 25px;
+            padding-right: 0px;
         }
     </style>
 </head>
 
 <body>
     <div style="background-color: #ffffff;padding: 0 20px;">
-        <p class="text-center" style="padding:10px 0px 15px 0px;font-size: 16px;">
+        <p class="text-center" style="padding:10px 0px 15px 0px;font-size: 16px;text-align: left;">
             亲爱的用户,总机服务致力于为用户提供更好的服务,您的使用体验我们在聆听,您真实的心声是我们不断进步的动力,快来告诉我们吧!
         </p>
     </div>
     <div style="height: 10px;"></div>
-    <div class="container" style="padding-top: 10px;background-color: #ffffff;">
+    <div class="container" style="padding-top: 10px;background-color: #ffffff;overflow-y: auto;max-height: 500px;z-index: 50;padding-bottom: 50px;">
         <div class="row clearfix">
             <form class="form-horizontal" id="form">
                 <div class="swiper-container col-md-12 column">
@@ -117,7 +117,7 @@
             </form>
         </div>
     </div>
-    <div style="background-color: #ffffff;padding-right: 20px;padding-left: 20px;width: 100%;position: absolute;bottom: 0;">
+    <div style="background-color: #ffffff;padding-right: 20px;padding-left: 20px;width: 100%;position: absolute;bottom: 0;z-index: 100;">
         <p style="padding-bottom: 10px;padding-top: 20px;text-align: center;">问卷一共<span style="color: #4db5e5;">5</span>个问题，当前为第<span style="color: #4db5e5;" id="activeSubject"></span>题</p>
         <div class="form-group" style="margin-left: 0px;margin-right: 0px;">
             <div class="col-sm-offset-1 col-sm-10" style="display: flex;justify-content: flex-start;align-items:center;padding-right: 0px;padding-left: 0px;">
@@ -125,7 +125,7 @@
                 <button type="button" id="nextbtn" class="btn btn-lg btn-primary btn-block" style="outline:none;">下一题</button>
             </div>
             <div class="col-sm-offset-1 col-sm-10" style="padding-top: 10px;">
-                <button type="button" id="btn" class="btn btn-lg btn-primary btn-block">提交</button>
+                <button type="button" id="btn" class="btn btn-lg btn-primary btn-block" style="outline:none;">提交</button>
             </div>
         </div>
     </div>
@@ -182,14 +182,14 @@
                     for(var j = 0,len2 = param[i].options.length;j<len2;j++){
                         $('.option'+i).append(
                             `<div class="form-group">
-                                <div class="col-sm-offset-1 col-sm-10" style="height: 40px;display: flex;justify-content: space-between;align-items: center;">                                    
-                                    <div style="width: 100%;line-height: 40px;">
-                                        <div>${param[i].options[j].title}</div>                                        
-                                    </div>
-                                    <div style="line-height: 40px;">
-                                        <input type="radio" value="${param[i].options[j].value}" name="${param[i].options[j].name}" />
-                                    </div>                                   
-                                </div>
+                                <div class="col-sm-offset-1 col-sm-10" style="margin-bottom: 10px;">
+                                    <label style="width: 100%;display: flex;justify-content: space-between;">                                        
+                                        <div style="text-align: left;padding-right: 10px;">${param[i].options[j].title}</div>
+                                        <div>
+                                            <input type="radio" class="form-control" value="${param[i].options[j].value}" name="${param[i].options[j].name}"/>
+                                        </div>                                        
+                                    </label>                                 
+                                </div>                                
                             </div>`
                         );
                     }
@@ -198,13 +198,13 @@
                     for(var j = 0,len2 = param[i].options.length;j<len2;j++){
                         $('.option'+i).append(
                             `<div class="form-group">
-                                <div class="col-sm-offset-1 col-sm-10" style="height: 40px;display: flex;justify-content: space-between;align-items: center;">                                    
-                                    <div >
-                                        <label>${param[i].options[j].title}</label>                                        
-                                    </div>
-                                    <div>
-                                        <input type="checkbox" value="${param[i].options[j].value}" name="${param[i].options[j].name}" />
-                                    </div>                                  
+                                <div class="col-sm-offset-1 col-sm-10" style="margin-bottom: 10px;">
+                                    <label style="width: 100%;display: flex;justify-content: space-between;">                                        
+                                        <div style="text-align: left;padding-right: 10px;">${param[i].options[j].title}</div>
+                                        <div>
+                                            <input type="checkbox" class="form-control" value="${param[i].options[j].value}" name="${param[i].options[j].name}"/>
+                                        </div>                                        
+                                    </label>                                
                                 </div>
                             </div>`
                         );
@@ -256,7 +256,8 @@
                 }
             })
             
-            submitBtn.onclick = function (ev){              
+            submitBtn.onclick = function (ev){
+                console.log('form',checkForm())             
                 if(checkForm()){
                     $.ajax({
                         type: 'POST',
@@ -274,7 +275,6 @@
             function checkForm() {
                 for(let i = 0,len=param.length;i<len;i++){
                     if(i === activeSlide){
-                        console.log(param[i])
                         if(param[i].isChoose === 1){
                             if( $("input[name="+param[i].options[0].name+"]:checked").size()!=0 ){
                                 // console.log("选中了")
@@ -312,7 +312,7 @@
                                 return false;
                             }
                         }
-                        if(param[i].isTextarea === 1){
+                        if(param[i].isTextarea === 1 && param[i].isRequired === 1){
                             var text = $('#'+param[i].name).val().trim();
                             if (text == null || text == "") {
                                 showDodal('请输入给我们的建议或意见!');
@@ -320,6 +320,8 @@
                             }else{
                                 return true;
                             }
+                        }else{
+                            return true;
                         }
                     }
                 }
