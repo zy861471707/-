@@ -103,7 +103,7 @@
 <body>
     <div style="background-color: #ffffff;padding: 0 20px;">
         <p class="text-center" style="padding:10px 0px 15px 0px;font-size: 16px;text-align: left;">
-            亲爱的用户,总机服务致力于为用户提供更好的服务,您的使用体验我们在聆听,您真实的心声是我们不断进步的动力,快来告诉我们吧!
+            问卷
         </p>
     </div>
     <div style="height: 10px;"></div>
@@ -157,7 +157,7 @@
         $(document).ready(function(){        
             $.ajax({
                 type: 'GET',
-                url: 'http://10.205.165.194:8080/admin/a/cms/questionnaire/get?titleId=1',
+                url: 'http://xxxx.com',
                 // data: {},
                 async:false,
                 dataType: "json",
@@ -265,7 +265,7 @@
                         data: $("form").serializeArray(),
                         dataType: "json",
                         success: function (data) {
-                            showDodal('操作成功,感谢您对总机服务的支持!');
+                            showDodal('操作成功');
                         }
                     });
                     $("#btn").attr('disabled', 'disabled');    
